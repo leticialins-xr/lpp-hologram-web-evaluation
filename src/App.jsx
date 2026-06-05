@@ -1,122 +1,66 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { fossils } from './data/fossils'
+import StartScreen from './screens/StartScreen'
+import HologramScreen from './screens/HologramScreen'
+import InfoScreen from './screens/InfoScreen'
+import './styles.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [screen, setScreen] = useState('start')
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const currentFossil = fossils[currentIndex]
+
+  function goToNextFossil() {
+    setCurrentIndex((previousIndex) =>
+      previousIndex === fossils.length - 1 ? 0 : previousIndex + 1
+    )
+  }
+
+  function goToPreviousFossil() {
+    setCurrentIndex((previousIndex) =>
+      previousIndex === 0 ? fossils.length - 1 : previousIndex - 1
+    )
+  }
+
+  function handleStart() {
+    setScreen('hologram')
+  }
+
+  function handleOpenInfo() {
+    setScreen('info')
+  }
+
+  function handleCloseInfo() {
+    setScreen('hologram')
+  }
+
+  function handleExit() {
+    setScreen('start')
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      {screen === 'start' && <StartScreen onStart={handleStart} />}
 
-      <div className="ticks"></div>
+      {screen === 'hologram' && (
+        <HologramScreen
+          fossil={currentFossil}
+          currentIndex={currentIndex}
+          totalFossils={fossils.length}
+          onNext={goToNextFossil}
+          onPrevious={goToPreviousFossil}
+          onInfo={handleOpenInfo}
+          onExit={handleExit}
+        />
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      {screen === 'info' && (
+        <InfoScreen
+          fossil={currentFossil}
+          onBack={handleCloseInfo}
+        />
+      )}
     </>
   )
 }
-
-export default App
