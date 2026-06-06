@@ -7,7 +7,7 @@ export default function StartScreen({ onStart }) {
         <div className="start-content">
           <img
             className="lpp-logo"
-            src="/images/lpp-logo.png"
+            src={`${import.meta.env.BASE_URL}/images/lpp-logo.png`}
             alt="Logo do Laboratório de Pesquisas Paleontológicas da UFAC"
             />
 
