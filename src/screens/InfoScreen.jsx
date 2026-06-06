@@ -92,9 +92,9 @@ export default function InfoScreen({ fossil, onBack }) {
               <ModelViewer
                 modelPath={fossil.model}
                 rotation={{ x: 0, y: 0 }}
-                zoom={1.35}
+                zoom={1.4}
                 isAutoRotating
-                modelScale={0.75}
+                modelScale={fossil.infoScale ?? 1}
               />
             </div>
           </section>

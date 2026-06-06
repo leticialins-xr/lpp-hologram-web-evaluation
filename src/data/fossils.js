@@ -4,6 +4,7 @@ export const fossils = [
     name: 'Fóssil 01',
     model: '/models/fossil-01.glb',
     projectionScale: 1,
+    infoScale: 0.7,
     illustration: '/images/fossil-01.png',
     audio: '/audio/evaluation-narration.mp3',
     description:
@@ -14,6 +15,7 @@ export const fossils = [
     name: 'Fóssil 02',
     model: '/models/fossil-02.glb',
     projectionScale: 1.7,
+    infoScale: 1.6,
     illustration: '/images/fossil-02.png',
     audio: '/audio/evaluation-narration.mp3',
     description:
@@ -24,6 +26,7 @@ export const fossils = [
     name: 'Fóssil 03',
     model: '/models/fossil-03.glb',
     projectionScale: 1.5,
+    infoScale: 1.5,
     illustration: '/images/fossil-03.png',
     audio: '/audio/evaluation-narration.mp3',
     description:

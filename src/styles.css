@@ -50,16 +50,16 @@ button {
   place-items: center;
   background: var(--screen-bg);
   padding: 8px;
+  overflow: auto;
 }
 
 .app-frame {
   position: relative;
-  width: min(1130px, 100vw - 16px);
+  width: min(1130px, calc(100vw - 16px), calc((100vh - 16px) * 2.173));
   aspect-ratio: 1130 / 520;
-  overflow: hidden;
-  border: 2px solid #e8e8e8;
-  border-radius: 46px;
-
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .phone-notch {
@@ -450,10 +450,10 @@ button {
 
 .small-preview-3d {
   position: absolute;
-  left: 126px;
-  bottom: 22px;
-  width: 180px;
-  height: 120px;
+  left: 106px;
+  bottom: 18px;
+  width: 220px;
+  height: 145px;
 }
 
 .small-preview-3d canvas {
