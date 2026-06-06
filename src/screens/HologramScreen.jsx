@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import ModelViewer from '../components/ModelViewer'
+import { useEffect, useRef, useState } from 'react'
+import HologramProjection from '../components/HologramProjection'
 
 const JOYSTICK_RADIUS = 46
-const JOYSTICK_SENSITIVITY = 0.0014
+const JOYSTICK_ROTATION_SPEED = 0.028
 
 export default function HologramScreen({
   fossil,
@@ -19,12 +19,40 @@ export default function HologramScreen({
   const [joystickPosition, setJoystickPosition] = useState({ x: 0, y: 0 })
   const [isDraggingJoystick, setIsDraggingJoystick] = useState(false)
 
+  const joystickDirectionRef = useRef({ x: 0, y: 0 })
+  const animationFrameRef = useRef(null)
+
   useEffect(() => {
     setRotation({ x: 0, y: 0 })
     setZoom(1)
     setIsAutoRotating(false)
     setJoystickPosition({ x: 0, y: 0 })
+    setIsDraggingJoystick(false)
+    joystickDirectionRef.current = { x: 0, y: 0 }
   }, [fossil.id])
+
+  useEffect(() => {
+    function rotateWithJoystick() {
+      const direction = joystickDirectionRef.current
+
+      if (direction.x !== 0 || direction.y !== 0) {
+        setRotation((previousRotation) => ({
+          x: previousRotation.x + direction.y * JOYSTICK_ROTATION_SPEED,
+          y: previousRotation.y + direction.x * JOYSTICK_ROTATION_SPEED
+        }))
+      }
+
+      animationFrameRef.current = requestAnimationFrame(rotateWithJoystick)
+    }
+
+    animationFrameRef.current = requestAnimationFrame(rotateWithJoystick)
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
 
   function updateJoystick(event) {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -43,15 +71,19 @@ export default function HologramScreen({
 
     setJoystickPosition({ x: limitedX, y: limitedY })
 
-    setRotation((previousRotation) => ({
-      x: previousRotation.x + limitedY * JOYSTICK_SENSITIVITY,
-      y: previousRotation.y + limitedX * JOYSTICK_SENSITIVITY
-    }))
+    joystickDirectionRef.current = {
+      x: limitedX / JOYSTICK_RADIUS,
+      y: limitedY / JOYSTICK_RADIUS
+    }
   }
 
   function handleJoystickPointerDown(event) {
     setIsDraggingJoystick(true)
-    event.currentTarget.setPointerCapture(event.pointerId)
+
+    if (event.currentTarget.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    }
+
     updateJoystick(event)
   }
 
@@ -63,6 +95,7 @@ export default function HologramScreen({
   function handleJoystickPointerUp() {
     setIsDraggingJoystick(false)
     setJoystickPosition({ x: 0, y: 0 })
+    joystickDirectionRef.current = { x: 0, y: 0 }
   }
 
   function handleReset() {
@@ -70,14 +103,15 @@ export default function HologramScreen({
     setZoom(1)
     setIsAutoRotating(false)
     setJoystickPosition({ x: 0, y: 0 })
+    joystickDirectionRef.current = { x: 0, y: 0 }
   }
 
   function handleZoomIn() {
-    setZoom((previousZoom) => Math.min(previousZoom + 0.12, 1.8))
+    setZoom((previousZoom) => Math.min(previousZoom + 0.12, 2.2))
   }
 
   function handleZoomOut() {
-    setZoom((previousZoom) => Math.max(previousZoom - 0.12, 0.45))
+    setZoom((previousZoom) => Math.max(previousZoom - 0.12, 0.55))
   }
 
   function handleAutoToggle() {
@@ -95,45 +129,13 @@ export default function HologramScreen({
         </div>
 
         <section className="projection-area">
-          <div className="hologram-face face-top">
-            <ModelViewer
-              modelPath={fossil.model}
-              rotation={rotation}
-              zoom={zoom}
-              isAutoRotating={isAutoRotating}
-              modelScale={0.42}
-            />
-          </div>
-
-          <div className="hologram-face face-right">
-            <ModelViewer
-              modelPath={fossil.model}
-              rotation={rotation}
-              zoom={zoom}
-              isAutoRotating={isAutoRotating}
-              modelScale={0.42}
-            />
-          </div>
-
-          <div className="hologram-face face-bottom">
-            <ModelViewer
-              modelPath={fossil.model}
-              rotation={rotation}
-              zoom={zoom}
-              isAutoRotating={isAutoRotating}
-              modelScale={0.42}
-            />
-          </div>
-
-          <div className="hologram-face face-left">
-            <ModelViewer
-              modelPath={fossil.model}
-              rotation={rotation}
-              zoom={zoom}
-              isAutoRotating={isAutoRotating}
-              modelScale={0.42}
-            />
-          </div>
+          <HologramProjection
+            modelPath={fossil.model}
+            rotation={rotation}
+            zoom={zoom}
+            isAutoRotating={isAutoRotating}
+            projectionScale={fossil.projectionScale}
+          />
         </section>
 
         <div
@@ -142,6 +144,7 @@ export default function HologramScreen({
           onPointerMove={handleJoystickPointerMove}
           onPointerUp={handleJoystickPointerUp}
           onPointerCancel={handleJoystickPointerUp}
+          onPointerLeave={handleJoystickPointerUp}
         >
           <div
             className="joystick-knob"
