@@ -128,30 +128,32 @@ export default function HologramScreen({
           </p>
         </div>
 
-        <section className="projection-area">
-          <HologramProjection
-            modelPath={fossil.model}
-            rotation={rotation}
-            zoom={zoom}
-            isAutoRotating={isAutoRotating}
-            projectionScale={fossil.projectionScale}
-          />
-        </section>
-
-        <div
-          className="joystick"
-          onPointerDown={handleJoystickPointerDown}
-          onPointerMove={handleJoystickPointerMove}
-          onPointerUp={handleJoystickPointerUp}
-          onPointerCancel={handleJoystickPointerUp}
-          onPointerLeave={handleJoystickPointerUp}
-        >
+        <div className="hologram-view">
+          <section className="projection-area">
+            <HologramProjection
+              modelPath={fossil.model}
+              rotation={rotation}
+              zoom={zoom}
+              isAutoRotating={isAutoRotating}
+              projectionScale={fossil.projectionScale}
+            />
+          </section>
+        
           <div
-            className="joystick-knob"
-            style={{
-              transform: `translate(${joystickPosition.x}px, ${joystickPosition.y}px)`
-            }}
-          />
+            className="joystick"
+            onPointerDown={handleJoystickPointerDown}
+            onPointerMove={handleJoystickPointerMove}
+            onPointerUp={handleJoystickPointerUp}
+            onPointerCancel={handleJoystickPointerUp}
+            onPointerLeave={handleJoystickPointerUp}
+          >
+            <div
+              className="joystick-knob"
+              style={{
+                transform: `translate(${joystickPosition.x}px, ${joystickPosition.y}px)`
+              }}
+            />
+          </div>
         </div>
 
         <aside className="controls-box">
